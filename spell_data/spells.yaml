@@ -8,6 +8,7 @@ Acid Arrow:
   material_consumed: false
   material_costly: false
   material_text: powdered rhubarb leaf and an adder’s stomach
+  flavor_text: It's an arrow, made of acid!
   range: 90 Feet
   ritual: false
   rules: >-

@@ -137,15 +137,34 @@ CONFIG_TEMPLATE = {
             "w": 416,
             "h": 82
         },
+        "flavor_text": {
+            "x": 110,
+            "y": 524,
+            "w": 600,
+            "h": 60
+        },
         "rules": {
             "x": 92,
             "y": 610,
             "w": 644,
             "h": 432
         },
+        "material_text": {
+            "x": 92,
+            "y": 1040,
+            "w": 416,
+            "h": 32
+        },
+        "source": {
+            "x": 500,
+            "y": 1040,
+            "w": 200,
+            "h": 32
+        },
         "colors": {
             "black": "#000000",
-            "grey": "#BFBFBF"
+            "grey": "#BFBFBF",
+            "white": "#FFFFFF"
         },
         "fonts": {
             "title": "resources/fonts/RINGM___.TTF",
@@ -163,6 +182,12 @@ CONFIG_TEMPLATE = {
             "mid": {
                 "x": 73,
                 "y": 516,
+                "w": 674,
+                "h": 77
+            },
+            "bottom": {
+                "x": 73,
+                "y": 1020,
                 "w": 674,
                 "h": 77
             }

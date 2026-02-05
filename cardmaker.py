@@ -25,6 +25,8 @@ def generate_spell_card(spell: Spell, out_dir: str):
             add_title(img, spell)
             add_level(img, spell)
             add_rules(img, spell)
+            add_flavor(img, spell)
+            add_source(img, spell)
             fn = ''.join(c for c in spell.name if (c.isalnum() or c in '._- '))
             fpath = get_abs_path(os.path.join(out_dir, f'{fn}.png'))
             img.save(filename=fpath)
@@ -32,6 +34,7 @@ def generate_spell_card(spell: Spell, out_dir: str):
         print('Unexpected error attempting to generate card for '
               f'{spell.name} spell: {repr(e)}')
         raise SystemExit(e)
+
 
 def draw_bars(canvas: Image, school: str):
     """
@@ -44,7 +47,7 @@ def draw_bars(canvas: Image, school: str):
         with Color(Config.get(f'school.{school}.bg_color')) as c:
             draw.stroke_color = c
             draw.fill_color = c
-            for pos in ['top', 'mid']:
+            for pos in ['top', 'mid', 'bottom']:
                 draw.rectangle(left=Config.get(f'template.bars.{pos}.x'),
                                top=Config.get(f'template.bars.{pos}.y'),
                                width=Config.get(f'template.bars.{pos}.w'),
@@ -112,6 +115,18 @@ def draw_spell_indicators(canvas: Image, spell: Spell):
                        width=cost_position['w'],
                        height=cost_position['h'],
                        font=cost_font,
+                       gravity='center')
+
+    if hasattr(spell, 'material_text'):
+        material_font = Font(path=Config.get_filepath('template.fonts.main'),
+                             color=Color('#FFFFFF'))
+        material_text = spell.material_text
+        canvas.caption(text=material_text,
+                       left=Config.get('template.material_text.x'),
+                       top=Config.get('template.material_text.y'),
+                       width=Config.get('template.material_text.w'),
+                       height=Config.get('template.material_text.h'),
+                       font=material_font,
                        gravity='south_west')
 
 
@@ -145,6 +160,7 @@ def write_spell_params(canvas: Image, spell: Spell):
                        font=value_font,
                        gravity="west")
 
+
 def make_canvas() -> Image:
     """
     Creates a blank image canvas to be used for drawing a spell card.
@@ -153,6 +169,7 @@ def make_canvas() -> Image:
     return Image(width=Config.get('template.canvas.w'),
                  height=Config.get('template.canvas.h'),
                  background=Color('white'))
+
 
 def apply_template(canvas: Image, spell: Spell):
     """
@@ -171,6 +188,7 @@ def apply_template(canvas: Image, spell: Spell):
     add_class_list(canvas, school, classes)
     write_spell_params(canvas, spell)
     draw_spell_indicators(canvas, spell)
+
 
 def add_class_list(canvas: Image, school: str, classes: List[str]):
     """
@@ -191,9 +209,9 @@ def add_class_list(canvas: Image, school: str, classes: List[str]):
     # for each class that has this spell in their class spell list
     with Color(Config.get(f'school.{school}.bg_color')) as school_color:
         font = Font(path=Config.get_filepath('template.fonts.main'),
-                color=school_color,
-                stroke_color=school_color,
-                stroke_width=0.05)
+                    color=school_color,
+                    stroke_color=school_color,
+                    stroke_width=0.05)
         class_ct = len(Config.get('general.classes'))
         line_height = floor(Config.get('template.class_list.h') / class_ct)
         for i in range(class_ct):
@@ -202,7 +220,7 @@ def add_class_list(canvas: Image, school: str, classes: List[str]):
                 continue
 
             # Draw "active" class name in the color of this school
-            #print(f"drawing active classname {cls} at left={dl} top={dt} wid={dw} hei={dh}")
+            # print(f"drawing active classname {cls} at left={dl} top={dt} wid={dw} hei={dh}")
             offset = line_height * i
             class_x = Config.get('template.class_list.x')
             class_y = Config.get('template.class_list.y') + offset
@@ -232,11 +250,12 @@ def add_class_list(canvas: Image, school: str, classes: List[str]):
                     + Config.get('template.bars.top.w')
                 bar_w = Config.get('template.class_list.marker.w')
                 bar_h = line_height \
-                        * Config.get('template.class_list.marker.h_pct')
+                    * Config.get('template.class_list.marker.h_pct')
                 bar_x = right_margin - bar_w
                 bar_y = class_y + extra_offset
                 draw.rectangle(left=bar_x, top=bar_y, width=bar_w, height=bar_h)
                 draw(canvas)
+
 
 def default_class_list_bg() -> Image:
     """
@@ -253,9 +272,7 @@ def default_class_list_bg() -> Image:
     with Color(Config.get('template.colors.grey')) as bg_color:
         grey_font = Font(path=Config.get_filepath('template.fonts.main'),
                          color=bg_color)
-                         # ,
-                         # stroke_color=bg_color,
-                         # stroke_width=0.05)
+
         class_ct = len(Config.get('general.classes'))
         line_height = floor(Config.get('template.class_list.h') / class_ct)
         for i in range(class_ct):
@@ -289,6 +306,7 @@ def add_title(canvas: Image, spell: Spell):
                    font=title_font,
                    gravity='west')
 
+
 def add_level(canvas: Image, spell: Spell):
     """
     Draws the text noting the level of the spell at the top of the spell card,
@@ -306,6 +324,40 @@ def add_level(canvas: Image, spell: Spell):
                    width=Config.get('template.metadata.level.label.w'),
                    height=Config.get('template.metadata.level.label.h'),
                    font=lvl_font,
+                   gravity='west')
+
+
+def add_source(canvas: Image, spell: Spell):
+    """
+    Draws the text noting the level of the spell at the top of the spell card,
+    next to the spell name.
+    :param canvas: The in-progress spell card image
+    :param spell: The Spell object that holds metadata about this spell
+    """
+    spell_school = spell.school.lower()
+    source_font_color = Config.get(f'school.{spell_school}.fg_color')
+    source_font = Font(path=Config.get_filepath('template.fonts.main_italic'),
+                       color=Color(source_font_color))
+    canvas.caption(text=spell.source,
+                   left=Config.get('template.source.x'),
+                   top=Config.get('template.source.y'),
+                   width=Config.get('template.source.w'),
+                   height=Config.get('template.source.h'),
+                   font=source_font,
+                   gravity='east')
+
+
+def add_flavor(canvas: Image, spell: Spell):
+    spell_school = spell.school.lower()
+    title_font_color = Config.get(f'school.{spell_school}.fg_color')
+    title_font = Font(path=Config.get_filepath('template.fonts.title'),
+                      color=Color(title_font_color))
+    canvas.caption(text=spell.flavor_text,
+                   left=Config.get('template.flavor_text.x'),
+                   top=Config.get('template.flavor_text.y'),
+                   width=Config.get('template.flavor_text.w'),
+                   height=Config.get('template.flavor_text.h'),
+                   font=title_font,
                    gravity='west')
 
 
@@ -336,12 +388,14 @@ def add_rules(canvas: Image, spell: Spell):
                    font=rules_font,
                    gravity='north_west')
 
+
 def replace_problematic_chars(txt: str) -> str:
     """
     Some higher-range unicode characters don't seem to render - perhaps this is
     an issue with the font we are using for rules text? Fix them here.
     """
     return txt.replace('−', '-')  # U+2212 (mathematical minus sign)
+
 
 def get_padded_rules(spell: Spell) -> str:
     """

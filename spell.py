@@ -24,7 +24,7 @@ class Spell:
     material_text: str       # Description of the material component
     material_cost: str       # Cost of the material component, such as "100gp"
     source: str              # The rulebook or other source text for this spell
-
+    flavor_text: str          # Flavor Text
     @staticmethod
     def csv_headers():
         """
@@ -35,7 +35,7 @@ class Spell:
         return ['level', 'name', 'school', 'classes', 'range', 'cast_time',
                 'duration', 'concentration', 'ritual', 'verbal', 'somatic',
                 'material', 'material_costly', 'material_consumed',
-                'material_text', 'material_cost', 'rules', 'source']
+                'material_text', 'material_cost', 'rules', 'source', 'flavor_text']
 
     def to_csv_dict(self):
         """
@@ -61,7 +61,8 @@ class Spell:
             'material_text': getattr(self, 'material_text', ''),
             'material_cost': getattr(self, 'material_cost', ''),
             'rules': getattr(self, 'rules', ''),
-            'source': getattr(self, 'source', '')
+            'source': getattr(self, 'source', ''),
+            'flavor_text': getattr(self, 'flavor_text, ')
         }
 
     def from_csv_dict(self, csv_row):
@@ -88,6 +89,7 @@ class Spell:
                 self.material_cost = csv_row['material_cost']
         self.rules = csv_row['rules']
         self.source = csv_row['source']
+        self.flavor_text = csv_row['flavor_text']
 
     class YamlRulesText:
         """
@@ -125,7 +127,8 @@ class Spell:
             'material_costly': getattr(self, 'material_costly', False),
             'material_consumed': getattr(self, 'material_consumed', False),
             'rules': self.YamlRulesText(getattr(self, 'rules', '')),
-            'source': getattr(self, 'source', '')
+            'source': getattr(self, 'source', ''),
+            'flavor_text': getattr(self, 'flavor_text', '')
         }
         if hasattr(self, 'material_text'):
             result['material_text'] = self.material_text
@@ -151,12 +154,14 @@ class Spell:
         self.material = entry['material'] if 'material' in entry else False
         self.material_costly = entry['material_costly'] if 'material_costly' in entry else False
         self.material_consumed = entry['material_consumed'] if 'material_consumed' in entry else False
+        self.material_text = entry['material_text'] if 'material_text' in entry else ''
         if self.material:
-            self.material_text = entry['material_text'] if 'material_text' in entry else ''
+
             if 'material_cost' in entry and len(entry['material_cost']) > 0:
                 self.material_cost = entry['material_cost']
         self.rules = entry['rules'] if 'rules' in entry else ''
         self.source = entry['source'] if 'source' in entry else ''
+        self.flavor_text = entry['flavor_text'] if 'flavor_text' in entry else ''
 
     def __getitem__(self, key):
         """
