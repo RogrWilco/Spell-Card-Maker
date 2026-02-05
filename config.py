@@ -243,6 +243,7 @@ CONFIG_TEMPLATE = {
     },
     "general": {
         "classes": [
+            "Artificer",
             "Bard",
             "Cleric",
             "Druid",
