@@ -118,8 +118,10 @@ def draw_spell_indicators(canvas: Image, spell: Spell):
                        gravity='center')
 
     if hasattr(spell, 'material_text'):
+        spell_school = spell.school.lower()
+        material_font_color = Config.get(f'school.{spell_school}.fg_color')
         material_font = Font(path=Config.get_filepath('template.fonts.main'),
-                             color=Color('#FFFFFF'))
+                             color=material_font_color)
         material_text = spell.material_text
         canvas.caption(text=material_text,
                        left=Config.get('template.material_text.x'),
