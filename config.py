@@ -297,5 +297,17 @@ CONFIG_TEMPLATE = {
             "fg_color": "#000000",
             "img": "resources/images/transmutation/icon.png"
         }
+    },
+    "damage": {
+        "acid": {
+            "bg_color": "#6DC3D3",
+            "fg_color": "#000000",
+            "img": "resources/images/damage/DamageAcid.png"
+        },
+        "fire": {
+            "bg_color" : "#6DC3D3",
+            "fg_color": "#000000",
+            "img": "resources/images/damage/DamageFire.png"
+        }
     }
 }

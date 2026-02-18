@@ -35,11 +35,12 @@ def generate_spell_card(spell: Spell, out_dir: str):
               f'{spell.name} spell: {repr(e)}')
         raise SystemExit(e)
 
-def draw_registration_marks(canvas: Image, school:str):
+
+def draw_registration_marks(canvas: Image):
     with Drawing() as draw:
         draw.stroke_color = "#000000"
-        maxWidth=Config.get('template.canvas.w')
-        maxHeight=Config.get('template.canvas.h')
+        maxwidth = Config.get('template.canvas.w')
+        maxheight = Config.get('template.canvas.h')
         """
         Draw the Left Top
         """
@@ -54,11 +55,11 @@ def draw_registration_marks(canvas: Image, school:str):
         """
         Draw the Right Top
         """
-        draw.rectangle(left=maxWidth-40,
+        draw.rectangle(left=maxwidth-40,
                        top=20,
                        width=40,
                        height=1)
-        draw.rectangle(left=maxWidth-20,
+        draw.rectangle(left=maxwidth-20,
                        top=0,
                        height=40,
                        width=1)
@@ -66,22 +67,22 @@ def draw_registration_marks(canvas: Image, school:str):
         Draw the Left Bottom
         """
         draw.rectangle(left=20,
-                       top=maxHeight-40,
+                       top=maxheight-40,
                        width=1,
                        height=40)
         draw.rectangle(left=0,
-                       top=maxHeight-20,
+                       top=maxheight-20,
                        height=1,
                        width=40)
         """
         Draw the Right Bottom
         """
-        draw.rectangle(left=maxWidth-40,
-                       top=maxHeight-20,
+        draw.rectangle(left=maxwidth-40,
+                       top=maxheight-20,
                        width=40,
                        height=1)
-        draw.rectangle(left=maxWidth-20,
-                       top=maxHeight-40,
+        draw.rectangle(left=maxwidth-20,
+                       top=maxheight-40,
                        height=40,
                        width=1)
 
@@ -128,6 +129,26 @@ def draw_school_icon(canvas: Image, school: str):
     canvas.composite(image=school_icon,
                      left=cx - floor(school_icon.width / 2),
                      top=cy - floor(school_icon.height / 2))
+
+
+def draw_damage_type(canvas: Image, spell: Spell):
+    """
+    Draws the damage type as an overlay on the bottom Right Corner of the card
+    """
+    if spell.damage_type:
+        print(spell.damage_type)
+        maxleft = 76
+        maxbottom = 1024
+        damage_type = spell.damage_type
+        img_path = Config.get_filepath(f'damage.{damage_type}.img')
+        damage_icon = Image(filename=img_path)
+        canvas.composite(image=damage_icon,
+                         left=maxleft,
+                         top=maxbottom)
+    else:
+        pass
+    return
+
 
 
 def draw_spell_indicators(canvas: Image, spell: Spell):
@@ -236,9 +257,10 @@ def apply_template(canvas: Image, spell: Spell):
     """
     school = spell.school.lower()
     classes = spell.classes
-    draw_registration_marks(canvas, school)
+    draw_registration_marks(canvas)
     # School-specific images
     draw_bars(canvas, school)
+    draw_damage_type(canvas, spell)
     draw_school_icon(canvas, school)
     add_class_list(canvas, school, classes)
     write_spell_params(canvas, spell)
