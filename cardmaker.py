@@ -35,6 +35,58 @@ def generate_spell_card(spell: Spell, out_dir: str):
               f'{spell.name} spell: {repr(e)}')
         raise SystemExit(e)
 
+def draw_registration_marks(canvas: Image, school:str):
+    with Drawing() as draw:
+        draw.stroke_color = "#000000"
+        maxWidth=Config.get('template.canvas.w')
+        maxHeight=Config.get('template.canvas.h')
+        """
+        Draw the Left Top
+        """
+        draw.rectangle(left=0,
+                       top=20,
+                       width=40,
+                       height=1)
+        draw.rectangle(left=20,
+                       top=0,
+                       width=1,
+                       height=40)
+        """
+        Draw the Right Top
+        """
+        draw.rectangle(left=maxWidth-40,
+                       top=20,
+                       width=40,
+                       height=1)
+        draw.rectangle(left=maxWidth-20,
+                       top=0,
+                       height=40,
+                       width=1)
+        """
+        Draw the Left Bottom
+        """
+        draw.rectangle(left=20,
+                       top=maxHeight-40,
+                       width=1,
+                       height=40)
+        draw.rectangle(left=0,
+                       top=maxHeight-20,
+                       height=1,
+                       width=40)
+        """
+        Draw the Right Bottom
+        """
+        draw.rectangle(left=maxWidth-40,
+                       top=maxHeight-20,
+                       width=40,
+                       height=1)
+        draw.rectangle(left=maxWidth-20,
+                       top=maxHeight-40,
+                       height=40,
+                       width=1)
+
+        draw(canvas)
+
 
 def draw_bars(canvas: Image, school: str):
     """
@@ -184,6 +236,7 @@ def apply_template(canvas: Image, spell: Spell):
     """
     school = spell.school.lower()
     classes = spell.classes
+    draw_registration_marks(canvas, school)
     # School-specific images
     draw_bars(canvas, school)
     draw_school_icon(canvas, school)
