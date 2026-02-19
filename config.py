@@ -302,12 +302,12 @@ CONFIG_TEMPLATE = {
         "acid": {
             "bg_color": "#6DC3D3",
             "fg_color": "#000000",
-            "img": "resources/images/damage/DamageAcid.png"
+            "img": "resources/images/damage/acid.png"
         },
         "fire": {
             "bg_color" : "#6DC3D3",
             "fg_color": "#000000",
-            "img": "resources/images/damage/DamageFire.png"
+            "img": "resources/images/damage/fire.png"
         }
     }
 }
